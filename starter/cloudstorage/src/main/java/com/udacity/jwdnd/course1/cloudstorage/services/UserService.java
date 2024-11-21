@@ -17,6 +17,8 @@ public class UserService {
     public UserService(UserMapper userMapper, HashService hashService) {
         this.userMapper = userMapper;
         this.hashService = hashService;
+
+        createUser(new User(null, "a", "", "a", "a", "a"));
     }
 
     public boolean isUsernameAvailable(String username) {

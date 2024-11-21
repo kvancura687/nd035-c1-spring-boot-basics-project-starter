@@ -30,6 +30,10 @@ public class CredentialService {
         return credentialMapper.getCredential(noteId);
     }
 
+    public Credential getCredentialById(Integer credentialId) {
+        return credentialMapper.getCredential(credentialId);
+    }
+
     public void deleteCredential(Integer noteId) {
         credentialMapper.deleteCredential(noteId);
     }
