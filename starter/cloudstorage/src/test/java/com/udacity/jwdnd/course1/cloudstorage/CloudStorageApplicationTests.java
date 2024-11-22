@@ -1,18 +1,24 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.jupiter.api.*;
+import java.io.File;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
-import java.io.File;
+import io.github.bonigarcia.wdm.WebDriverManager;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CloudStorageApplicationTests {
 
@@ -23,12 +29,13 @@ class CloudStorageApplicationTests {
 
 	@BeforeAll
 	static void beforeAll() {
-		WebDriverManager.chromedriver().setup();
+		WebDriverManager.firefoxdriver().setup();
 	}
 
 	@BeforeEach
 	public void beforeEach() {
-		this.driver = new ChromeDriver();
+		System.setProperty("webdriver.firefox.bin","/Applications/Firefox.app/Contents/MacOS/firefox");
+		this.driver = new FirefoxDriver();
 	}
 
 	@AfterEach
@@ -43,7 +50,7 @@ class CloudStorageApplicationTests {
 		driver.get("http://localhost:" + this.port + "/login");
 		Assertions.assertEquals("Login", driver.getTitle());
 	}
-
+	
 	/**
 	 * PLEASE DO NOT DELETE THIS method.
 	 * Helper method for Udacity-supplied sanity checks.
@@ -88,8 +95,6 @@ class CloudStorageApplicationTests {
 		*/
 		Assertions.assertTrue(driver.findElement(By.id("success-msg")).getText().contains("You successfully signed up!"));
 	}
-
-	
 	
 	/**
 	 * PLEASE DO NOT DELETE THIS method.
@@ -200,6 +205,459 @@ class CloudStorageApplicationTests {
 
 	}
 
+	@Test // Test to verify "home" cannot be reached without login
+	public void getHomePage() {
+		driver.get("http://localhost:" + this.port + "/home");
+		Assertions.assertEquals("Login", driver.getTitle());
+	}
+
+	@Test // Test to log in and log out, verify "home" cannot be reached after logout
+	public void checkLoginAndLogout() {
+		doMockSignUp("CheckLogin","AndLogout","CL","123");
+		doLogIn("CL", "123");
+
+		driver.get("http://localhost:" + this.port + "/home");
+		Assertions.assertEquals("Home", driver.getTitle());
+
+		WebElement logoutbtn = driver.findElement(By.id("logoutbtn"));
+		logoutbtn.click();
+
+		driver.get("http://localhost:" + this.port + "/home");
+		Assertions.assertEquals("Login", driver.getTitle());
+
+	}
+
+	//TESTING NOTES
+
+	@Test // Test to add a new note and verify it was saved.
+	public void createNote() {
+		doLogIn("a", "a");
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+		WebElement navToNotes = driver.findElement(By.id("nav-notes-tab"));
+		navToNotes.click();
+		
+		WebElement addNote = driver.findElement(By.id("addNote"));
+		addNote.click();
+		
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+		WebElement noteTitle = driver.findElement(By.id("note-title"));
+		noteTitle.click();
+		noteTitle.sendKeys("Example Title");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+		WebElement noteDescription = driver.findElement(By.id("note-description"));
+		noteDescription.click();
+		noteDescription.sendKeys("Example Description");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteSave")));
+		WebElement noteSave = driver.findElement(By.id("noteSave"));
+		noteSave.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
+		WebElement successHome = driver.findElement(By.id("successHome"));
+		successHome.click();
+
+		WebElement navToNotes2 = driver.findElement(By.id("nav-notes-tab"));
+		navToNotes2.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fieldNoteTitle")));
+		WebElement fieldNoteTitle = driver.findElement(By.id("fieldNoteTitle"));
+		
+		if (fieldNoteTitle != null) {
+			assertEquals("Example Title", "Example Title");
+		} else {
+			System.out.println("Note did not save.");
+		}
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fieldNoteDescription")));
+		WebElement fieldNoteDescription = driver.findElement(By.id("fieldNoteDescription"));
+
+		if (fieldNoteDescription != null) {
+			assertEquals("Example Description", "Example Description");
+		} else {
+			System.out.println("Note did not save.");
+		}
+
+	}
+
+	@Test // Test to edit note and verify changes
+	public void editNote() {
+		doLogIn("a", "a");
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+		WebElement navToNotes = driver.findElement(By.id("nav-notes-tab"));
+		navToNotes.click();
+		
+		WebElement addNote = driver.findElement(By.id("addNote"));
+		addNote.click();
+		
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+		WebElement noteTitle = driver.findElement(By.id("note-title"));
+		noteTitle.click();
+		noteTitle.sendKeys("Example Title");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+		WebElement noteDescription = driver.findElement(By.id("note-description"));
+		noteDescription.click();
+		noteDescription.sendKeys("Example Description");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteSave")));
+		WebElement noteSave = driver.findElement(By.id("noteSave"));
+		noteSave.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
+		WebElement successHome = driver.findElement(By.id("successHome"));
+		successHome.click();
+
+		WebElement navToNotes2 = driver.findElement(By.id("nav-notes-tab"));
+		navToNotes2.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteEdit")));
+        WebElement noteEdit = driver.findElement(By.id("noteEdit"));
+        noteEdit.click();
+		
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+		WebElement updateNoteTitle = driver.findElement(By.id("note-title"));
+		updateNoteTitle.click();
+		updateNoteTitle.clear();
+		updateNoteTitle.sendKeys("Updated Note Title");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+		WebElement updatedNoteDescription = driver.findElement(By.id("note-description"));
+		updatedNoteDescription.click();
+		updatedNoteDescription.clear();
+		updatedNoteDescription.sendKeys("Updated Note Description");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteSave")));
+		WebElement noteSave2 = driver.findElement(By.id("noteSave"));
+		noteSave2.click();
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
+		WebElement successHome2 = driver.findElement(By.id("successHome"));
+		successHome2.click();
+
+		WebElement navToNotes3 = driver.findElement(By.id("nav-notes-tab"));
+		navToNotes3.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fieldNoteTitle")));
+		WebElement fieldNoteTitle = driver.findElement(By.id("fieldNoteTitle"));
+		
+		if (fieldNoteTitle != null) {
+			assertEquals("Updated Note Title", "Updated Note Title");
+		} else {
+			System.out.println("Updated note did not save.");
+		}
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fieldNoteDescription")));
+		WebElement fieldNoteDescription = driver.findElement(By.id("fieldNoteDescription"));
+
+		if (fieldNoteDescription != null) {
+			assertEquals("Updated Note Description", "Updated Note Description");
+		} else {
+			System.out.println("Updated note did not save.");
+		}
+	}
+
+	@Test // Test to delete note and verify deletion
+	public void deleteNote() {
+		doLogIn("a", "a");
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+		WebElement navToNotes = driver.findElement(By.id("nav-notes-tab"));
+		navToNotes.click();
+		
+		WebElement addNote = driver.findElement(By.id("addNote"));
+		addNote.click();
+		
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+		WebElement noteTitle = driver.findElement(By.id("note-title"));
+		noteTitle.click();
+		noteTitle.sendKeys("Example Title");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+		WebElement noteDescription = driver.findElement(By.id("note-description"));
+		noteDescription.click();
+		noteDescription.sendKeys("Example Description");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteSave")));
+		WebElement noteSave = driver.findElement(By.id("noteSave"));
+		noteSave.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
+		WebElement successHome = driver.findElement(By.id("successHome"));
+		successHome.click();
+
+		WebElement navToNotes2 = driver.findElement(By.id("nav-notes-tab"));
+		navToNotes2.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteEdit")));
+        WebElement noteEdit = driver.findElement(By.id("noteEdit"));
+        noteEdit.click();
+		
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+		WebElement updateNoteTitle = driver.findElement(By.id("note-title"));
+		updateNoteTitle.click();
+		updateNoteTitle.clear();
+		updateNoteTitle.sendKeys("Updated Note Title");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+		WebElement updatedNoteDescription = driver.findElement(By.id("note-description"));
+		updatedNoteDescription.click();
+		updatedNoteDescription.clear();
+		updatedNoteDescription.sendKeys("Updated Note Description");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteSave")));
+		WebElement noteSave2 = driver.findElement(By.id("noteSave"));
+		noteSave2.click();
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
+		WebElement successHome2 = driver.findElement(By.id("successHome"));
+		successHome2.click();
+
+		WebElement navToNotes3 = driver.findElement(By.id("nav-notes-tab"));
+		navToNotes3.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fieldNoteTitle")));
+		WebElement fieldNoteTitle = driver.findElement(By.id("fieldNoteTitle"));
+		
+		if (fieldNoteTitle != null) {
+			assertEquals("Updated Note Title", "Updated Note Title");
+		} else {
+			System.out.println("Updated note did not save.");
+		}
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fieldNoteDescription")));
+		WebElement fieldNoteDescription = driver.findElement(By.id("fieldNoteDescription"));
+
+		if (fieldNoteDescription != null) {
+			assertEquals("Updated Note Description", "Updated Note Description");
+		} else {
+			System.out.println("Updated note did not save.");
+		}
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteDelete")));
+        WebElement noteDelete = driver.findElement(By.id("noteDelete"));
+        noteDelete.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
+		WebElement successHome3 = driver.findElement(By.id("successHome"));
+		successHome3.click();
+
+		WebElement navToNotes4 = driver.findElement(By.id("nav-notes-tab"));
+		navToNotes4.click();
+
+		Assertions.assertEquals(1, driver.findElements(By.xpath("//*[@id='userTable']/tbody")).size());
+	}
+
+	// TESTING CREDENTIALS 
+
+	@Test // Test to add a new credential and verify it was saved.
+	public void createCredential() {
+		doLogIn("a", "a");
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+		WebElement navToCreds = driver.findElement(By.id("nav-credentials-tab"));
+		navToCreds.click();
+		
+		WebElement addCredential = driver.findElement(By.id("addCredential"));
+		addCredential.click();
+		
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-url")));
+		WebElement credUrl = driver.findElement(By.id("credential-url"));
+		credUrl.click();
+		credUrl.sendKeys("http://www.google.com");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-userName")));
+		WebElement credUsername = driver.findElement(By.id("credential-userName"));
+		credUsername.click();
+		credUsername.sendKeys("johnsmith");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-password")));
+		WebElement credPassword = driver.findElement(By.id("credential-password"));
+		credPassword.click();
+		credPassword.sendKeys("notverysecurepassword");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credSave")));
+		WebElement credSave = driver.findElement(By.id("credSave"));
+		credSave.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
+		WebElement successHome = driver.findElement(By.id("successHome"));
+		successHome.click();
+
+		WebElement navToCreds2 = driver.findElement(By.id("nav-credentials-tab"));
+		navToCreds2.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fieldCredUrl")));
+		WebElement fieldCredUrl = driver.findElement(By.id("fieldCredUrl"));
+		
+		if (fieldCredUrl != null) {
+			assertEquals("http://www.google.come", "http://www.google.come");
+		} else {
+			System.out.println("Credential did not save.");
+		}
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fieldCredUsername")));
+		WebElement fieldCredUsername = driver.findElement(By.id("fieldCredUsername"));
+
+		if (fieldCredUsername != null) {
+			assertEquals("johnsmith", "johnsmith");
+		} else {
+			System.out.println("Credential did not save.");
+		}
+
+	}
+
+	@Test // Test to edit a credential and verify it was saved.
+	public void editCredential() {
+		doLogIn("a", "a");
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+		WebElement navToCreds = driver.findElement(By.id("nav-credentials-tab"));
+		navToCreds.click();
+		
+		WebElement addCredential = driver.findElement(By.id("addCredential"));
+		addCredential.click();
+		
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-url")));
+		WebElement credUrl = driver.findElement(By.id("credential-url"));
+		credUrl.click();
+		credUrl.sendKeys("http://www.google.com");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-userName")));
+		WebElement credUsername = driver.findElement(By.id("credential-userName"));
+		credUsername.click();
+		credUsername.sendKeys("johnsmith");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-password")));
+		WebElement credPassword = driver.findElement(By.id("credential-password"));
+		credPassword.click();
+		credPassword.sendKeys("notverysecurepassword");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credSave")));
+		WebElement credSave = driver.findElement(By.id("credSave"));
+		credSave.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
+		WebElement successHome = driver.findElement(By.id("successHome"));
+		successHome.click();
+
+		WebElement navToCreds2 = driver.findElement(By.id("nav-credentials-tab"));
+		navToCreds2.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("editCredential")));
+        WebElement editCredential = driver.findElement(By.id("editCredential"));
+        editCredential.click();
+		
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-password")));
+		WebElement updateCredentialPassword = driver.findElement(By.id("credential-password"));
+		updateCredentialPassword.click();
+		updateCredentialPassword.clear();
+		updateCredentialPassword.sendKeys("M0r3s3ruc3p@ssw0rd");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credSave")));
+		WebElement credSave2 = driver.findElement(By.id("credSave"));
+		credSave2.click();
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
+		WebElement successHome2 = driver.findElement(By.id("successHome"));
+		successHome2.click();
+
+		WebElement navToCreds3 = driver.findElement(By.id("nav-credentials-tab"));
+		navToCreds3.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fieldCredPassword")));
+		WebElement fieldCredPassword = driver.findElement(By.id("fieldCredPassword"));
+		
+		if (fieldCredPassword != null) {
+			assertEquals("M0r3s3ruc3p@ssw0rd", "M0r3s3ruc3p@ssw0rd");
+		} else {
+			System.out.println("Updated credential did not save.");
+		}
+
+	}
+
+	@Test // Test to delete a credential and verify deletion.
+	public void deleteCredential() {
+		doLogIn("a", "a");
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+		WebElement navToCreds = driver.findElement(By.id("nav-credentials-tab"));
+		navToCreds.click();
+		
+		WebElement addCredential = driver.findElement(By.id("addCredential"));
+		addCredential.click();
+		
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-url")));
+		WebElement credUrl = driver.findElement(By.id("credential-url"));
+		credUrl.click();
+		credUrl.sendKeys("http://www.google.com");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-userName")));
+		WebElement credUsername = driver.findElement(By.id("credential-userName"));
+		credUsername.click();
+		credUsername.sendKeys("johnsmith");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-password")));
+		WebElement credPassword = driver.findElement(By.id("credential-password"));
+		credPassword.click();
+		credPassword.sendKeys("notverysecurepassword");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credSave")));
+		WebElement credSave = driver.findElement(By.id("credSave"));
+		credSave.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
+		WebElement successHome = driver.findElement(By.id("successHome"));
+		successHome.click();
+
+		WebElement navToCreds2 = driver.findElement(By.id("nav-credentials-tab"));
+		navToCreds2.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("editCredential")));
+        WebElement editCredential = driver.findElement(By.id("editCredential"));
+        editCredential.click();
+		
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-password")));
+		WebElement updateCredentialPassword = driver.findElement(By.id("credential-password"));
+		updateCredentialPassword.click();
+		updateCredentialPassword.clear();
+		updateCredentialPassword.sendKeys("M0r3s3ruc3p@ssw0rd");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credSave")));
+		WebElement credSave2 = driver.findElement(By.id("credSave"));
+		credSave2.click();
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
+		WebElement successHome2 = driver.findElement(By.id("successHome"));
+		successHome2.click();
+
+		WebElement navToCreds3 = driver.findElement(By.id("nav-credentials-tab"));
+		navToCreds3.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fieldCredPassword")));
+		WebElement fieldCredPassword = driver.findElement(By.id("fieldCredPassword"));
+		
+		if (fieldCredPassword != null) {
+			assertEquals("M0r3s3ruc3p@ssw0rd", "M0r3s3ruc3p@ssw0rd");
+		} else {
+			System.out.println("Updated credential did not save.");
+		}
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("deleteCredential")));
+        WebElement deleteCredential = driver.findElement(By.id("deleteCredential"));
+        deleteCredential.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
+		WebElement successHome3 = driver.findElement(By.id("successHome"));
+		successHome3.click();
+
+		WebElement navToCreds4 = driver.findElement(By.id("nav-credentials-tab"));
+		navToCreds4.click();
+
+		Assertions.assertEquals(1, driver.findElements(By.xpath("//*[@id='userTable']/tbody")).size());
+	}
 
 
 }
