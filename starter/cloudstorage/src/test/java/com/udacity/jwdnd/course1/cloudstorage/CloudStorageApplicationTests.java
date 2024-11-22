@@ -254,10 +254,6 @@ class CloudStorageApplicationTests {
 		WebElement noteSave = driver.findElement(By.id("noteSave"));
 		noteSave.click();
 
-		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
-		WebElement successHome = driver.findElement(By.id("successHome"));
-		successHome.click();
-
 		WebElement navToNotes2 = driver.findElement(By.id("nav-notes-tab"));
 		navToNotes2.click();
 
@@ -306,10 +302,6 @@ class CloudStorageApplicationTests {
 		WebElement noteSave = driver.findElement(By.id("noteSave"));
 		noteSave.click();
 
-		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
-		WebElement successHome = driver.findElement(By.id("successHome"));
-		successHome.click();
-
 		WebElement navToNotes2 = driver.findElement(By.id("nav-notes-tab"));
 		navToNotes2.click();
 
@@ -332,10 +324,6 @@ class CloudStorageApplicationTests {
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteSave")));
 		WebElement noteSave2 = driver.findElement(By.id("noteSave"));
 		noteSave2.click();
-
-        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
-		WebElement successHome2 = driver.findElement(By.id("successHome"));
-		successHome2.click();
 
 		WebElement navToNotes3 = driver.findElement(By.id("nav-notes-tab"));
 		navToNotes3.click();
@@ -384,10 +372,6 @@ class CloudStorageApplicationTests {
 		WebElement noteSave = driver.findElement(By.id("noteSave"));
 		noteSave.click();
 
-		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
-		WebElement successHome = driver.findElement(By.id("successHome"));
-		successHome.click();
-
 		WebElement navToNotes2 = driver.findElement(By.id("nav-notes-tab"));
 		navToNotes2.click();
 
@@ -410,10 +394,6 @@ class CloudStorageApplicationTests {
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteSave")));
 		WebElement noteSave2 = driver.findElement(By.id("noteSave"));
 		noteSave2.click();
-
-        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
-		WebElement successHome2 = driver.findElement(By.id("successHome"));
-		successHome2.click();
 
 		WebElement navToNotes3 = driver.findElement(By.id("nav-notes-tab"));
 		navToNotes3.click();
@@ -439,10 +419,6 @@ class CloudStorageApplicationTests {
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteDelete")));
         WebElement noteDelete = driver.findElement(By.id("noteDelete"));
         noteDelete.click();
-
-		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
-		WebElement successHome3 = driver.findElement(By.id("successHome"));
-		successHome3.click();
 
 		WebElement navToNotes4 = driver.findElement(By.id("nav-notes-tab"));
 		navToNotes4.click();
@@ -481,10 +457,6 @@ class CloudStorageApplicationTests {
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credSave")));
 		WebElement credSave = driver.findElement(By.id("credSave"));
 		credSave.click();
-
-		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
-		WebElement successHome = driver.findElement(By.id("successHome"));
-		successHome.click();
 
 		WebElement navToCreds2 = driver.findElement(By.id("nav-credentials-tab"));
 		navToCreds2.click();
@@ -539,10 +511,6 @@ class CloudStorageApplicationTests {
 		WebElement credSave = driver.findElement(By.id("credSave"));
 		credSave.click();
 
-		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
-		WebElement successHome = driver.findElement(By.id("successHome"));
-		successHome.click();
-
 		WebElement navToCreds2 = driver.findElement(By.id("nav-credentials-tab"));
 		navToCreds2.click();
 
@@ -559,10 +527,6 @@ class CloudStorageApplicationTests {
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credSave")));
 		WebElement credSave2 = driver.findElement(By.id("credSave"));
 		credSave2.click();
-
-        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
-		WebElement successHome2 = driver.findElement(By.id("successHome"));
-		successHome2.click();
 
 		WebElement navToCreds3 = driver.findElement(By.id("nav-credentials-tab"));
 		navToCreds3.click();
@@ -608,10 +572,6 @@ class CloudStorageApplicationTests {
 		WebElement credSave = driver.findElement(By.id("credSave"));
 		credSave.click();
 
-		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
-		WebElement successHome = driver.findElement(By.id("successHome"));
-		successHome.click();
-
 		WebElement navToCreds2 = driver.findElement(By.id("nav-credentials-tab"));
 		navToCreds2.click();
 
@@ -629,10 +589,6 @@ class CloudStorageApplicationTests {
 		WebElement credSave2 = driver.findElement(By.id("credSave"));
 		credSave2.click();
 
-        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
-		WebElement successHome2 = driver.findElement(By.id("successHome"));
-		successHome2.click();
-
 		WebElement navToCreds3 = driver.findElement(By.id("nav-credentials-tab"));
 		navToCreds3.click();
 
@@ -648,10 +604,6 @@ class CloudStorageApplicationTests {
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("deleteCredential")));
         WebElement deleteCredential = driver.findElement(By.id("deleteCredential"));
         deleteCredential.click();
-
-		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successHome")));
-		WebElement successHome3 = driver.findElement(By.id("successHome"));
-		successHome3.click();
 
 		WebElement navToCreds4 = driver.findElement(By.id("nav-credentials-tab"));
 		navToCreds4.click();
